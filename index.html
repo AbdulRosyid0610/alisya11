@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Ulang Tahun! 🎉</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 3.5rem;
+            color: #fff;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease-out;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            color: #f0f0f0;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: scaleIn 0.8s ease-out 0.5s both;
+            margin-bottom: 30px;
+        }
+        .message { font-size: 1.2rem; line-height: 1.8; color: #333; margin-bottom: 30px; }
+        .cake { font-size: 8rem; margin: 20px 0; animation: bounce 2s infinite; cursor: pointer; }
+        .balloons { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
+        .balloon { font-size: 4rem; animation: float 3s ease-in-out infinite; cursor: pointer; transition: transform 0.3s; }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 15px 40px;
+            font-size: 1.2rem; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s; margin: 10px;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .confetti { position: fixed; width: 10px; height: 10px; animation: confetti-fall 3s linear; z-index: 999; pointer-events: none;}
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+        @keyframes confetti-fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+        .wishes-container { margin-top: 30px; }
+        .wish-input { width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px; font-size: 1rem; margin-bottom: 15px; outline: none; }
+        .wishes-list { text-align: left; margin-top: 20px; }
+        .wish-item {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 15px; border-radius: 10px; margin-bottom: 10px;
+            border-left: 4px solid #667eea; display: flex; align-items: center; gap: 15px;
+        }
+        .envelope { font-size: 2.5rem; cursor: pointer; transition: transform 0.3s; flex-shrink: 0; }
+        .envelope:hover { transform: scale(1.2) rotate(10deg); }
+        .music-toggle {
+            position: fixed; bottom: 30px; right: 30px; background: white;
+            border-radius: 50%; width: 60px; height: 60px; display: flex;
+            align-items: center; justify-content: center; font-size: 2rem;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>happy birthday Mom Alisya</h1>
+        <p class="subtitle">Semoga hari spesialmu penuh kebahagiaan!</p>
+
+        <div class="card">
+            <div class="cake" onclick="blowCandles()">🎂</div>
+            <p class="message">
+                Di hari istimewa ini, semoga semua impian dan harapanmu menjadi kenyataan. 
+                Semoga tahun ini membawa lebih banyak kebahagiaan, kesehatan, dan kesuksesan dalam hidupmu.
+            </p>
+            
+            <div class="balloons">
+                <span class="balloon" onclick="popBalloon(this)">🎈</span>
+                <span class="balloon" onclick="popBalloon(this)">🎈</span>
+                <span class="balloon" onclick="popBalloon(this)">🎈</span>
+            </div>
+
+            <button class="btn" onclick="celebrate()">🎉 Rayakan!</button>
+            <button class="btn" onclick="Amplop()">Amplop</button>
+
+            <div class="wishes-container" id="wishesContainer" style="display: none;">
+                <input type="text" class="wish-input" id="wishInput" placeholder="Tulis ucapan ulang tahunmu di sini...">
+                <button class="btn" onclick="addWish()">Kirim Ucapan</button>
+                <div class="wishes-list" id="wishesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="music-toggle" onclick="toggleMusic()">🎵</div>
+
+    <audio id="birthdayAudio" loop>
+        <source src="happy-birthday-christmas-456278.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let musicPlaying = false;
+        let wishes = [];
+        const audio = document.getElementById('birthdayAudio');
+
+        function celebrate() {
+            for (let i = 0; i < 100; i++) { createConfetti(); }
+            const cake = document.querySelector('.cake');
+            cake.style.animation = 'none';
+            setTimeout(() => { cake.style.animation = 'bounce 2s infinite'; }, 10);
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
+            confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            document.body.appendChild(confetti);
+            setTimeout(() => { confetti.remove(); }, 3000);
+        }
+
+        function blowCandles() {
+            const cake = document.querySelector('.cake');
+            cake.textContent = '🎁';
+            celebrate();
+            setTimeout(() => { cake.textContent = '🎂'; }, 2000);
+        }
+
+        function popBalloon(balloon) {
+            balloon.textContent = '💥';
+            setTimeout(() => {
+                balloon.style.opacity = '0';
+                setTimeout(() => {
+                    balloon.textContent = '🎈';
+                    balloon.style.opacity = '1';
+                }, 500);
+            }, 300);
+        }
+
+        // Fungsi kembali ke halaman utama
+    function Amplop() {
+        window.location.href = "surat.html";
+}
+
+
+        function addWish() {
+            const input = document.getElementById('wishInput');
+            const wish = input.value.trim();
+            if (wish) {
+                wishes.push(wish);
+                displayWishes();
+                input.value = '';
+                celebrate();
+            }
+        }
+
+        function displayWishes() {
+            const list = document.getElementById('wishesList');
+            list.innerHTML = '';
+            wishes.forEach((wish, index) => {
+                const item = document.createElement('div');
+                item.className = 'wish-item';
+                item.innerHTML = `
+                    <span class="envelope" onclick="openWishInNewPage('${encodeURIComponent(wish)}')">✉️</span>
+                    <span style="font-weight:bold; color:#667eea; cursor:pointer;" onclick="openWishInNewPage('${encodeURIComponent(wish)}')">
+                        Ucapan #${index + 1} (Klik Amplop)
+                    </span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function openWishInNewPage(encodedWish) {
+            // Membuka file surat.html dan mengirim data teks ucapan
+            window.location.href = `surat.html?wish=${encodedWish}`;
+        }
+
+        function toggleMusic() {
+            const toggle = document.querySelector('.music-toggle');
+            if (audio.paused) {
+                audio.play().catch(e => console.log("Audio play blocked"));
+                musicPlaying = true;
+                toggle.textContent = '🔊';
+            } else {
+                audio.pause();
+                musicPlaying = false;
+                toggle.textContent = '🎵';
+            }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(celebrate, 1000);
+            document.body.addEventListener('click', function() {
+                if (!musicPlaying) toggleMusic();
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>

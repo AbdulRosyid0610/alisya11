@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amplop Ucapan Ulang Tahun</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            perspective: 1500px;
+            position: relative;
+        }
+
+        .envelope-wrapper {
+            width: 450px;
+            height: 320px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+            filter: drop-shadow(0 15px 50px rgba(0,0,0,0.4));
+        }
+
+        .envelope-wrapper:hover:not(.opened) {
+            transform: scale(1.08) translateY(-5px);
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .envelope-back {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-radius: 12px;
+            box-shadow: 
+                inset 0 2px 10px rgba(255,255,255,0.2),
+                0 20px 60px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .envelope-back::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65%;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            transform-origin: top center;
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 3;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .envelope-flap::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+            border-radius: 50%;
+        }
+
+        .envelope-flap::after {
+            content: '💌';
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .envelope-front {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 52%;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-radius: 0 0 12px 12px;
+            z-index: 2;
+            box-shadow: inset 0 -2px 10px rgba(0,0,0,0.2);
+        }
+
+        .stamp {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #fff9e6, #ffffff);
+            border: 3px dashed #c0392b;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            z-index: 4;
+            transform: rotate(-5deg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .address {
+            position: absolute;
+            top: 50%;
+            left: 25px;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 1rem;
+            z-index: 4;
+            font-style: italic;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.6;
+        }
+
+        .wax-seal {
+            position: absolute;
+            bottom: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #c0392b, #8b1e1e);
+            border-radius: 50%;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.3s;
+        }
+
+        .envelope.open .wax-seal {
+            opacity: 0;
+            transform: translateX(-50%) scale(0);
+        }
+
+        .card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateY(0) scale(0.95);
+            width: 92%;
+            height: 90%;
+            background: linear-gradient(135deg, #fdfcfb 0%, #f8f5f0 100%);
+            border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            padding: 35px;
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1;
+            overflow-y: auto;
+            border: 3px solid #e8dcc4;
+        }
+
+        .card::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .card::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .card::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .envelope.open .card {
+            opacity: 1;
+            transform: translate(-50%, -50%) translateY(-25px) scale(1);
+            transition-delay: 0.6s;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: white;
+            color: #764ba2;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            transition: all 0.4s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1) translateY(-3px);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+        }
+
+        .close-button {
+            position: absolute;
+            top: -45px;
+            right: 5px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: 2px solid white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            opacity: 0;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+        }
+
+        .envelope.open .close-button {
+            opacity: 1;
+            transition-delay: 1.2s;
+        }
+
+        .instruction {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: #764ba2;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: bounce 2s infinite;
+            z-index: 10;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .card-header {
+            text-align: center;
+            border-bottom: 3px double #667eea;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+        }
+
+        .card-header .emoji-row {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header h1 {
+            color: #667eea;
+            font-size: 2.2rem;
+            margin-top: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-family: 'Georgia', serif;
+        }
+
+        .card-body {
+            font-size: 1.15rem;
+            line-height: 2;
+            color: #444;
+            font-family: 'Georgia', serif;
+        }
+
+        .card-body p {
+            margin-bottom: 18px;
+            text-align: justify;
+        }
+
+        .wish-message {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            margin: 25px 0;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wish-message::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 5rem;
+            color: rgba(102, 126, 234, 0.2);
+            font-family: Georgia, serif;
+        }
+
+        .signature {
+            margin-top: 35px;
+            text-align: right;
+            font-style: italic;
+            color: #667eea;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .decorative-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            margin: 20px 0;
+        }
+
+        @keyframes confetti-fall {
+            to { 
+                transform: translateY(100vh) rotate(720deg); 
+                opacity: 0; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="instruction" id="instruction">
+        👆 Klik Amplop untuk Membuka Surat
+    </div>
+
+    <button class="back-button" onclick="goBack()">
+        <span>⬅️</span>
+        <span>Kembali</span>
+    </button>
+
+    <div class="container">
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope" id="envelope">
+                <div class="stamp">🎂</div>
+                <div class="address">
+                    Untuk:<br>
+                    <strong>Orang Tersayang</strong> 💝<br>
+                    <small>Di Hari Istimewanya</small>
+                </div>
+                
+                <div class="wax-seal">🎁</div>
+                
+                <div class="envelope-back"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-front"></div>
+
+                <button class="close-button" id="closeButton" onclick="closeEnvelope(event)">×</button>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="emoji-row">🎉 🎊 🎈 🎁 ✨</div>
+                        <h1>happy birthday mom Alisya</h1>
+                    </div>
+                    
+                    <div class="decorative-line"></div>
+                    
+                    <div class="card-body" id="cardBody">
+                        <p> Terima kasih atas semua cinta, pengorbanan, dan dukungan yang tak pernah berhenti. Mama adalah wanita terhebat yang aku kenal, dan aku sangat beruntung menjadi anak Mama. Semoga Mama selalu sehat, bahagia, dan dikelilingi orang-orang yang menyayangi Mama.</p>
+                        
+                        <div class="wish-message" id="wishMessage">
+                            Semoga hari ini penuh dengan kebahagiaan dan tawa. Aku sayang Mama lebih dari kata-kata bisa ungkapkan.
+                        </div>
+
+                        <p> Aku selalu ingat semua kenangan indah yang kita bagi bersama. Dari masa kecilku hingga saat ini, Mama selalu ada untukku. Semoga kita bisa terus menciptakan lebih banyak kenangan indah bersama.</p>
+                        
+                        <div class="decorative-line"></div>
+                        
+                        <div class="signature">
+                            Dengan sepenuh hati,<br>
+                            ❤️ <strong>Sahabat Terbaikmu</strong> ❤️
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const instruction = document.getElementById('instruction');
+        let isOpen = false;
+
+        // Buat bintang berkilauan di background
+        function createSparkles() {
+            for (let i = 0; i < 20; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + 'vw';
+                sparkle.style.top = Math.random() * 100 + 'vh';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(sparkle);
+            }
+        }
+
+        // Fungsi mengambil ucapan dari URL
+        function getWishFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('wish');
+        }
+
+     // Fungsi kembali ke halaman utama
+function goBack() {
+    window.location.href = "index.html";
+}
+
+        // Logika Buka Amplop
+        envelopeWrapper.addEventListener('click', function(e) {
+            if (e.target.id === 'closeButton') return;
+            if (!isOpen) {
+                envelope.classList.add('open');
+                envelopeWrapper.classList.add('opened');
+                instruction.style.opacity = '0';
+                setTimeout(() => {
+                    instruction.style.display = 'none';
+                }, 300);
+                isOpen = true;
+                createConfetti();
+            }
+        });
+
+        function closeEnvelope(event) {
+            event.stopPropagation();
+            envelope.classList.remove('open');
+            envelopeWrapper.classList.remove('opened');
+            isOpen = false;
+            setTimeout(() => {
+                instruction.style.display = 'block';
+                setTimeout(() => {
+                    instruction.style.opacity = '1';
+                }, 50);
+            }, 500);
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '12px';
+                    confetti.style.height = '12px';
+                    confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-20px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.zIndex = '1000';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.animation = `confetti-fall ${2.5 + Math.random() * 2}s linear forwards`;
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 30);
+            }
+        }
+
+        // Saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            createSparkles();
+            
+            const rawWish = getWishFromURL();
+            
+            if (rawWish) {
+                const cleanWish = decodeURIComponent(rawWish);
+                const wishElement = document.getElementById('wishMessage');
+                if (wishElement && cleanWish.trim()) {
+                    wishElement.innerText = cleanWish;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
